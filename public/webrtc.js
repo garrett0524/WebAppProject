@@ -59,3 +59,4 @@ function connectWebRTC() {
         void webRTCConnection.setLocalDescription(webRTCOffer);
     });
 }
+
