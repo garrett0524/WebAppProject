@@ -24,24 +24,41 @@
 </div>
 
 
+
 <div class="contents">
 
     <div class="chat">
 
 
         <div id="chat-messages">
-        </div>
+            </div>
+
+            <!-- <div class="chat-video"> 
+                <video width="300" controls> 
+                    <source src="/public/videos/video_1.mp4" type="video/mp4">
+                </video>
+            </div> -->
 
 
         <div class="chat-form">
             <hr>
+            
             <label>
+                <input type="hidden" id="xsrf-token" value="{{xsrf_token}}">  
                 Chat:
                 <input id="chat-text-box" type="text">
             </label>
             <button id="chat-button" onclick="sendChat()">Send</button>
-        </div>
 
+            <div class="media-upload"> 
+                <form action="/upload-media" method="post" enctype="multipart/form-data">
+                    <label for="chat-upload-media">Upload a Picture or Video: </label>
+                    <input id="chat-upload-media" type="file" name="media">
+                    <input type="submit" value="Post">
+                </form> 
+            </div>
+            
+        </div>
     </div>
 
     <div class="video-chat">
@@ -81,7 +98,7 @@
             <label>Password:&nbsp;
                 <input id="login-form-pass" type="password" name="password_login">
             </label>
-            <input type="submit" value="Post">
+            <input type="submit" value="Post" id="login-post-button">
         </form>
 
 
@@ -92,6 +109,12 @@
             <br/>
             <input type="submit" value="Post">
         </form>
+
+        <div>
+            <h3>Authenticated Users</h3>
+            <div id="UserList"></div>
+        </div>
+
 
 
     </div>

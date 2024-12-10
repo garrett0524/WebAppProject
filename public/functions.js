@@ -1,4 +1,4 @@
-const ws = false;
+const ws = true;
 let socket = null;
 
 function initWS() {
@@ -7,14 +7,24 @@ function initWS() {
 
     // Called whenever data is received from the server over the WebSocket connection
     socket.onmessage = function (ws_message) {
+
         const message = JSON.parse(ws_message.data);
         const messageType = message.messageType
         if(messageType === 'chatMessage'){
             addMessageToChat(message);
-        }else{
+
+        }
+        else if(messageType == 'AdduserList'){
+            adduser_tolist(message);
+        }
+        else if(messageType == 'DeluserList'){
+            remUser_fromlist(message);
+        }
+        else{
             // send message to WebRTC
             processMessageAsWebRTC(message, messageType);
         }
+
     }
 }
 
@@ -50,6 +60,51 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
 
+function userMessageHTML(messageJSON) {
+    const username = messageJSON.username;
+    return "<div>" + username + "</div>";
+}
+
+
+function adduser_tolist(messageJSON) {
+    const userlist = document.getElementById("UserList");
+    const usernameToAdd = messageJSON.username;
+    const userItems = userlist.getElementsByTagName("div");
+
+    // Check if username is already in the list
+    for (let i = 0; i < userItems.length; i++) {
+        const userItem = userItems[i];
+        const username = userItem.innerText.trim(); // Get the username text and remove  extra whitespace
+
+        // If the username is already in the list then return and dont do any adding
+        if (username === usernameToAdd) {
+            return;
+        }
+    }
+
+    // If the username is not in the list, add it
+    userlist.innerHTML += userMessageHTML(messageJSON);
+}
+
+function remUser_fromlist(messageJSON) {
+    const usernameToRemove = messageJSON.username;
+    const userList = document.getElementById("UserList");
+    const userItems = userList.getElementsByTagName("div");
+
+    // Loop through the user items in the user list
+    for (let i = 0; i < userItems.length; i++) {
+        const userItem = userItems[i];
+        const username = userItem.innerText.trim(); // Get the username text and trim any extra whitespace
+
+        // Check if the username matches the one to remove
+        if (username === usernameToRemove) {
+            // Remove the user item from the user list
+            userItem.remove();
+            break; // Exit the loop after removing the user item
+        }
+    }
+}
+
 function sendChat() {
     const chatTextBox = document.getElementById("chat-text-box");
     const message = chatTextBox.value;
@@ -57,6 +112,10 @@ function sendChat() {
     if (ws) {
         // Using WebSockets
         socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message}));
+        // socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message}));
+        // socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message}));
+        // socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message}));
+        // socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message}));
     } else {
         // Using AJAX
         const request = new XMLHttpRequest();
@@ -66,7 +125,11 @@ function sendChat() {
             }
         }
         const messageJSON = {"message": message};
+
+        const xsrfToken = document.getElementById('xsrf-token').value;
+
         request.open("POST", "/chat-messages");
+        request.setRequestHeader("X-XSRF-Token", xsrfToken); // Include the token
         request.send(JSON.stringify(messageJSON));
     }
     chatTextBox.focus();

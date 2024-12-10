@@ -20,6 +20,14 @@ body {
 img.post {
     width: 120px;
 }
+.uploaded-image {
+    max-width: 200px; 
+    height: auto; 
+}
+/* .uploaded-video {
+    max-width: 1500px; 
+    height: auto; 
+} */
 
 .title {
     height: 5%;
@@ -30,14 +38,14 @@ img.post {
     /*justify-content: space-around;*/
     background-color: #F6F1F1;
     color: black;
-    height: 17%;
+    height: 15%;
     align-items: center;
 }
 
 .contents {
     display: flex;
     justify-content: space-around;
-    height: 78%
+    height: 80%
 }
 
 .chat {
@@ -45,6 +53,7 @@ img.post {
     background-color: #146C94;
     padding: 20px;
 }
+
 
 .video-chat {
     background-color: #158Cb4;
